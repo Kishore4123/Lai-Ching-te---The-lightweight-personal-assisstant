@@ -1,0 +1,25 @@
+# Use official Python 3.10 slim image
+FROM python:3.10-slim
+
+# Install system dependencies required for CustomTkinter/Tkinter GUI
+RUN apt-get update && apt-get install -y \
+    python3-tk \
+    tk-dev \
+    libx11-6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of your project files
+COPY . .
+
+# Set environment variable to ensure unbuffered output (like your -u flag)
+ENV PYTHONUNBUFFERED=1
+
+# Command to launch the UI dashboard when the container starts
+CMD ["python", "ui_app.py"]

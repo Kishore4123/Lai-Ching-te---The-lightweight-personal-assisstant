@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  email_agent:
+    build: .
+    container_name: royal_email_agent
+    # Use host networking so CustomTkinter can easily connect to your Ubuntu display
+    # and the script can seamlessly talk to http://localhost:11434
+    network_mode: "host"
+    environment:
+      - DISPLAY=$DISPLAY
+      - XAUTHORITY=$XAUTHORITY
+    volumes:
+      # Map your local X11 socket to allow GUI rendering
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Map your local DB directory so vector memory persists between container restarts
+      - ./Email_DB:/app/Email_DB
+      # Map your keys and models so they don't get hardcoded into the image
+      - ./.env:/app/.env:ro
+      - ./service_account.json:/app/service_account.json:ro
+      - ./event_classifier.pkl:/app/event_classifier.pkl:ro
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_backend
+    network_mode: "host"
+    volumes:
+      - ./ollama_data:/root/.ollama
+    # IMPORTANT: If you have an NVIDIA GPU on your Ubuntu machine, uncomment the lines below!
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
