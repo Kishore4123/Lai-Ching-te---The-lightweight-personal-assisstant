@@ -75,3 +75,20 @@ Plaintext
 ├── event_classifier.pkl    # Pickled Random Forest Model
 ├── .env                    # IMAP Passwords (Keep Private!)
 └── /Email_DB/              # Auto-generated Chroma Vector Store
+├── DockerFile                   
+└── Docker.yaml
+
+
+3. Execution Instructions
+To bring your ecosystem to life inside the container, open your Ubuntu terminal and run these exact commands:
+
+Step 1: Grant UI Permissions
+Because Docker is technically a separate user, you must grant it permission to draw windows on your current screen. Run this once per session:
+
+Bash
+xhost +local:docker
+Step 2: Build and Launch
+Navigate to your project directory and start the compose cluster:
+
+Bash
+docker-compose up --build
